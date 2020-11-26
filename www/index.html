@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- Include meta tag to ensure proper rendering and touch zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Include jQuery Mobile stylesheets -->
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <!-- Include the jQuery library -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!-- Include the jQuery Mobile library -->
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" src="js/cordova.js"></script>
+    <script type="text/javascript" src="js/databaseHandler.js"></script>
+    <script type="text/javascript" src="js/rateHandler.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <title>Rating restaurant</title>
+</head>
+
+<body>
+    <div data-role="page" id="addpage">
+        <div data-role="header" data-position="fixed" style="color: white; background-color: #FF6A00FF">
+            <h1>Add Rate</h1>
+        </div>
+        <div data-role="main" class="ui-content">
+            <form id="form">
+                <div class="ui-field-contain">
+
+                    <div data-role = "fieldcontain">
+                        <label>Restaurant Type(<span style="color: red">*</span>):</label>
+                            <select name="rType" id="rType">
+                            <option value="">-----Select-----</option>
+                                    <option value="Grill">Grill</option>
+                                    <option value="Fast food">Fast food</option>
+                                    <option value="Sea food">Sea food</option>
+                            </select>
+
+                    </div>
+
+                    <div data-role = "fieldcontain">
+                        <label for="rName">Restaurant Name(<span style="color: red">*</span>):</label>
+                        <input type="text" id="rName" name="rName" data-clear-btn="true" placeholder="Input Name" required />
+                    </div>
+
+                    <div data-role = "fieldcontain">
+                        <label for="rDate">Date of Visit(<span style="color: red">*</span>):</label>
+                        <input type="date" id="rDate" name="rDate" data-clear-btn="true" />
+                    </div>
+                    <div data-role = "fieldcontain">
+                        <label for="rPrice">Average Meal Price(<span style="color: red">*</span>):</label>
+                        <input type="number" pattern="" id="rPrice" name="rPrice" data-clear-btn="true" placeholder="Input Price" required />
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for="rService">Service Rating(<span style="color: red">*</span>):</label>
+                        <input type="range" name="rService" id="rService" value="5" min="1" max="5" data-highlight="true" />
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for="rClean">Cleanliness Rating(<span style="color: red">*</span>):</label>
+                        <input type="range" name="rClean" id="rClean" value="5" min="1" max="5" data-highlight="true" />
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for="rQuality">Food Quality Rating(<span style="color: red">*</span>):</label>
+                        <input type="range" name="rQuality" id="rQuality" value="5" min="1" max="5" data-highlight="true" />
+                    </div>
+
+                    
+                    <div data-role="fieldcontain">
+                        <label for="rNote">Notes:</label>
+                        <textarea name="rNote" id="rNote"></textarea>
+                    </div>
+
+                    <div data-role = "fieldcontain">
+                        <label for="rReporter">Reporter(<span style="color: red">*</span>):</label>
+                        <input type="text" id="rReporter" name="rReporter" data-clear-btn="true" placeholder="Input Reporter" required />
+                    </div>
+
+                    
+                    <!-- <div data-role = "fieldcontain" style="width: 100px; text-align: center;"> -->
+                        <!-- <label for="btnAdd"></label> -->
+                        <button style="background-color: green; ">
+                            <a style="color: white" id="btnAdd" onclick="add()">ADD</a>
+                        </button>
+                        
+                        <!-- </div> -->
+
+                    </div>
+                </form>
+            </div>
+            <div data-role="footer" data-position="fixed" style="background-color: #00A3FFFF">
+                <div style="float: left;">
+                    <button style="margin-left: 20px; width: 120px;">
+                        <a style="text-decoration: none;" href="#addpage">Rating Now</a>
+                    </button>
+                </div>
+                <div style="float: right;">
+                    <button style="margin-right: 20px; width: 120px">
+                        <a style="text-decoration: none;" href="#loadpage"> View Rates</a>
+                    </button>
+                </div>
+                <!-- <h6 style="color: white">© i-Rate</h6> -->
+            </div>
+        </div>
+        <div data-role="page" id="loadpage" style="background-color: #C0C0C0FF">
+
+            <div data-role="header" data-position="fixed" style="color: white; background-color: #FF6A00FF">
+
+                <h1>List Rates </h1>
+            </div>
+            <div data-role="main" class="ui-content">
+
+                <ul style="border-radius: 15px" data-role="listview" data-filter="true"
+                data-inset="true"
+                id="lstRates"></ul>
+
+                <div style="width: 250px" class="modal-content" data-role="popup" id="popupUpdateDelete">
+                    <div class="modal-body">
+                      <p>Action</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button style="border-radius: 20px; background-color: red" onclick="deleteRate()" type="button" data-dismiss="modal-content"><span style="color: white">Delete</span></button>
+
+                      
+                      <a href="#updateNoteDialog" style="color: white">
+                        <button style="border-radius: 20px; background-color: blue; color: white" type="button" data-dismiss="modal-content">
+                            Note
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div data-role="footer" data-position="fixed" style="background-color: #00A3FFFF">
+            <div style="float: left;">
+                <button style="margin-left: 20px; width: 120px;">
+                    <a style="text-decoration: none;" href="#addpage">Rating Now</a>
+                </button>
+            </div>
+            <div style="float: right;">
+                <button style="margin-right: 20px; width: 120px">
+                    <a style="text-decoration: none;" href="#loadpage"> View Rates</a>
+                </button>
+            </div>
+            <!-- <h6 style="color: white">© i-Rate</h6> -->
+        </div>
+    </div>
+
+
+
+    <div data-role="dialog" id="updateNoteDialog">
+        <div data-role="header" data-position="fixed">
+            <a href="#loadpage" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all"> Right </a>
+
+            <h1>Update Note</h1>
+        </div>
+        <div data-role="main" class="ui-content">
+            <form id="myform">
+                <div class="ui-field-contain">
+                    <div data-role = "fieldcontain" hidden>
+                        <label for="ID">ID*:</label>
+                        <input type="number" id="ID" name="ID" disabled/>
+                    </div>
+
+                    <!-- <div data-role = "fieldcontain">
+                        <label for="Name">Restaurant Name <span style="color: red">*</span>:</label>
+                        <input type="text" id="Name" name="Name" readonly />
+                    </div> -->
+                    <div data-role="fieldcontain">
+                        <label for="upNote">Note:</label>
+                        <textarea name="upNote" id="upNote"></textarea>
+                    </div>
+
+                    <button onclick="updateNote()" style="background-color: blue; border-radius: 20px;">
+                        <span style="color: white">Update</span>
+                    </button>
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
